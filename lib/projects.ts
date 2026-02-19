@@ -7,12 +7,12 @@ export type Project = {
 }
 
 export const projects: Project[] = [
-  {
+    {
     title: "Day 01 - Link Hub",
     description: "Landing page to showcase all projects.",
     status: "Done",
-    demoUrl: "#",
-    repoUrl: "#",
+    demoUrl: "https://day-01-linkhub.vercel.app",
+    repoUrl: "https://github.com/drlsyrfddn-glitch/day-01-linkhub",
   },
   {
     title: "Day 02 - Pomodoro Timer",
