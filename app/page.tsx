@@ -15,19 +15,20 @@ export default function Home() {
 
   // sync initial toggle state from current <html> class
   useEffect(() => {
-    setIsDark(document.documentElement.classList.contains("dark"))
-  }, [])
+  setIsDark(getThemeFromDom() === "dark")
+}, [])
+
+  function getThemeFromDom(): "light" | "dark" {
+  return document.documentElement.dataset.theme === "light" ? "light" : "dark"
+}
 
   function toggleTheme() {
-    const root = document.documentElement
-    const next = root.classList.contains("dark") ? "light" : "dark"
-
-    if (next === "dark") root.classList.add("dark")
-    else root.classList.remove("dark")
-
-    localStorage.setItem("theme", next)
-    setIsDark(next === "dark")
-  }
+  const current = getThemeFromDom()
+  const next = current === "dark" ? "light" : "dark"
+  const setter = (globalThis as any).__setTheme as ((t: "light" | "dark") => void) | undefined
+  if (setter) setter(next)
+  setIsDark(next === "dark")
+}
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase()

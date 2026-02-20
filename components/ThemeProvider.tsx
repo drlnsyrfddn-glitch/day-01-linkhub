@@ -4,13 +4,6 @@ import { useEffect, useState } from "react"
 
 type Theme = "light" | "dark"
 
-function getSystemTheme(): Theme {
-  if (typeof window === "undefined") return "dark"
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light"
-}
-
 export default function ThemeProvider({
   children,
 }: {
@@ -20,13 +13,21 @@ export default function ThemeProvider({
 
   useEffect(() => {
     const saved = localStorage.getItem("theme") as Theme | null
-    const initial = saved ?? getSystemTheme()
-    setTheme(initial)
+    if (saved) {
+      setTheme(saved)
+      return
+    }
+    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+    setTheme(systemDark ? "dark" : "light")
   }, [])
 
   useEffect(() => {
-    // Apply to <html> so it affects entire app
     const root = document.documentElement
+
+    // set data attribute (CSS variables)
+    root.dataset.theme = theme
+
+    // keep class for compatibility
     if (theme === "dark") root.classList.add("dark")
     else root.classList.remove("dark")
 
@@ -34,12 +35,23 @@ export default function ThemeProvider({
   }, [theme])
 
   return (
-    <div
-      data-theme={theme}
-      className="min-h-screen"
-    >
-      {/* expose setter via window (simple) */}
+    <ThemeContextBridge theme={theme} setTheme={setTheme}>
       {children}
-    </div>
+    </ThemeContextBridge>
   )
+}
+
+/** simple internal bridge so we can change theme from button without prop drilling */
+function ThemeContextBridge({
+  theme,
+  setTheme,
+  children,
+}: {
+  theme: Theme
+  setTheme: (t: Theme) => void
+  children: React.ReactNode
+}) {
+  ;(globalThis as any).__setTheme = setTheme
+  ;(globalThis as any).__theme = theme
+  return <>{children}</>
 }
