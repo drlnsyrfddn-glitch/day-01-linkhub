@@ -17,7 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         <ThemeProvider>
-          <main className="min-h-screen px-6 py-16 bg-gray-50 text-gray-900 dark:bg-gradient-to-b dark:from-black dark:to-gray-900 dark:text-white transition-colors">
+          <main className="min-h-screen px-6 py-16">
             <div className="mx-auto max-w-6xl">{children}</div>
           </main>
         </ThemeProvider>
